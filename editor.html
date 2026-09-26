@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专业图片编辑器</title>
+    <style>
+        :root {
+            --color-primary: #3b82f6;
+            --color-primary-hover: #2563eb;
+            --color-primary-light: #dbeafe;
+            --color-success: #22c55e;
+            --color-success-hover: #16a34a;
+            --color-danger: #ef4444;
+            --color-danger-hover: #dc2626;
+            --color-warning: #f59e0b;
+            --color-info: #3b82f6;
+            
+            --bg-page: #eff6ff;
+            --bg-card: #ffffff;
+            --bg-elevated: #ffffff;
+            --bg-muted: #f3f4f6;
+            --bg-input: #ffffff;
+            
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --text-inverse: #ffffff;
+            
+            --border-light: #e5e7eb;
+            --border-default: #d1d5db;
+            --border-strong: #9ca3af;
+            
+            --shadow-sm: none;
+            --shadow-md: none;
+            --shadow-lg: none;
+            --shadow-glow-primary: none;
+            
+            --radius-sm: 4px;
+            --radius-md: 6px;
+            --radius-lg: 8px;
+            --radius-full: 9999px;
+            
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 12px;
+            --space-lg: 16px;
+            --space-xl: 24px;
+            
+            --transition-fast: 100ms ease;
+            --transition-normal: 150ms ease;
+            --transition-slow: 200ms ease;
+            
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-size-xs: 11px;
+            --font-size-sm: 12px;
+            --font-size-base: 13px;
+            --font-size-md: 14px;
+            --font-size-lg: 16px;
+            
+            --toolbar-height: 36px;
+            --toolbar-bg: #ffffff;
+            --toolbar-border: #e5e7eb;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-primary: #60a5fa;
+                --color-primary-hover: #3b82f6;
+                --color-primary-light: #1e3a8a;
+                --color-success: #4ade80;
+                --color-success-hover: #22c55e;
+                --color-danger: #f87171;
+                --color-danger-hover: #ef4444;
+                --color-warning: #fbbf24;
+                --color-info: #60a5fa;
+                
+                --bg-page: #111827;
+                --bg-card: #1f2937;
+                --bg-elevated: #374151;
+                --bg-muted: #374151;
+                --bg-input: #1f2937;
+                
+                --text-primary: #f9fafb;
+                --text-secondary: #d1d5db;
+                --text-muted: #9ca3af;
+                --text-inverse: #111827;
+                
+                --border-light: #374151;
+                --border-default: #4b5563;
+                --border-strong: #6b7280;
+                
+                --shadow-sm: none;
+                --shadow-md: none;
+                --shadow-lg: none;
+                --shadow-glow-primary: none;
+                
+                --toolbar-bg: #1f2937;
+                --toolbar-border: #374151;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        ::-webkit-scrollbar { display: none; }
+        * { scrollbar-width: none; -ms-overflow-style: none; }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-page);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        .editor-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: var(--bg-card);
+        }
+        
+        .top-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-lg) var(--space-xl);
+            background: var(--toolbar-bg);
+            border-bottom: 2px solid var(--toolbar-border);
+        }
+        
+        .editor-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .top-controls {
+            display: flex;
+            gap: var(--space-sm);
+        }
+        
+        .control-button {
+            padding: var(--space-sm) var(--space-lg);
+            border: 2px solid transparent;
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-family: inherit;
+        }
+        
+        .control-button.cancel {
+            background: var(--bg-muted);
+            color: var(--text-secondary);
+            border-color: var(--border-light);
+        }
+        
+        .control-button.cancel:hover {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border-color: var(--color-primary);
+        }
+        
+        .control-button.download {
+            background: var(--color-success);
+            color: var(--text-inverse);
+            border-color: var(--color-success);
+        }
+        
+        .control-button.download:hover {
+            background: var(--color-success-hover);
+            border-color: var(--color-success-hover);
+        }
+        
+        .control-button.save {
+            background: var(--color-primary);
+            color: var(--text-inverse);
+            border-color: var(--color-primary);
+        }
+        
+        .control-button.save:hover {
+            background: var(--color-primary-hover);
+            border-color: var(--color-primary-hover);
+        }
+        
+        .canvas-area {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: var(--space-xl);
+            background: var(--bg-page);
+        }
+        
+        #imageCanvas {
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            background: white;
+            cursor: crosshair;
+        }
+        
+        .bottom-toolbar {
+            background: var(--toolbar-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-top: 1px solid var(--toolbar-border);
+            padding: var(--space-sm) var(--space-md);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .toolbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .tool-strip {
+            display: flex;
+            gap: 2px;
+            background: var(--bg-muted);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            padding: var(--space-xs);
+        }
+
+        .tool-item {
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--text-secondary);
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+
+        .tool-item:hover {
+            background: var(--border-light);
+            color: var(--text-primary);
+        }
+
+        .tool-item.active {
+            background: var(--color-primary);
+            color: var(--text-inverse);
+        }
+        
+        .tool-separator {
+            width: 1px;
+            height: 24px;
+            background: var(--border-light);
+            margin: 0 var(--space-xs);
+        }
+        
+        .tool-options {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            display: none;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            min-width: 200px;
+        }
+        
+        .tool-options.active {
+            display: block;
+            animation: fadeInUp 0.2s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
+        .option-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+            flex-wrap: nowrap;
+        }
+        
+        .option-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .option-label {
+            font-size: var(--font-size-xs);
+            font-weight: 500;
+            color: var(--text-secondary);
+            min-width: 40px;
+            flex-shrink: 0;
+        }
+        
+        .color-input {
+            width: 28px;
+            height: 28px;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            background: none;
+            flex-shrink: 0;
+            padding: 2px;
+        }
+        
+        .size-input {
+            width: 100px;
+            height: 4px;
+            border-radius: var(--radius-full);
+            background: var(--border-light);
+            outline: none;
+            cursor: pointer;
+            -webkit-appearance: none;
+            flex-shrink: 0;
+        }
+        
+        .size-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+        }
+        
+        .size-display {
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
+            min-width: 45px;
+            font-weight: 500;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        .text-input {
+            padding: var(--space-xs) var(--space-sm);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-sm);
+            width: 100px;
+            background: var(--bg-input);
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+        
+        .text-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-light);
+        }
+        
+        .style-buttons {
+            display: flex;
+            gap: var(--space-xs);
+            margin-left: auto;
+        }
+        
+        .style-button {
+            width: 24px;
+            height: 24px;
+            border: 1px solid var(--border-light);
+            background: var(--bg-card);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: var(--font-size-sm);
+            transition: all var(--transition-fast);
+            color: var(--text-primary);
+        }
+        
+        .style-button:hover {
+            background: var(--bg-muted);
+        }
+        
+        .style-button.active {
+            background: var(--color-primary);
+            color: var(--text-inverse);
+            border-color: var(--color-primary);
+        }
+        
+        .number-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: var(--space-xs);
+            width: 140px;
+            margin-left: auto;
+        }
+        
+        .number-button {
+            width: 24px;
+            height: 24px;
+            border: 1px solid var(--color-primary);
+            background: var(--bg-card);
+            color: var(--color-primary);
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 10px;
+            transition: all var(--transition-fast);
+            font-family: inherit;
+        }
+        
+        .number-button:hover,
+        .number-button.active {
+            background: var(--color-primary);
+            color: var(--text-inverse);
+        }
+        
+        .property-panel {
+            position: fixed;
+            top: 50%;
+            right: var(--space-xl);
+            transform: translateY(-50%);
+            width: 280px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--space-lg);
+            display: none;
+            z-index: 1000;
+            max-height: 70vh;
+            overflow-y: auto;
+            cursor: move;
+            user-select: none;
+        }
+        
+        .property-panel.active {
+            display: block;
+        }
+        
+        .property-title {
+            font-size: var(--font-size-md);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-sm);
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            cursor: grab;
+        }
+        
+        .property-title:active {
+            cursor: grabbing;
+        }
+        
+        .property-item {
+            margin-bottom: var(--space-md);
+            background: var(--bg-muted);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-light);
+        }
+        
+        .property-item:last-of-type {
+            margin-bottom: 0;
+        }
+        
+        .property-item label {
+            display: block;
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-sm);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        
+        .property-input {
+            width: 100%;
+            padding: var(--space-sm) var(--space-md);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-sm);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            transition: all var(--transition-fast);
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        
+        .property-input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-light);
+        }
+        
+        .property-input[type="color"] {
+            height: 32px;
+            padding: 2px;
+            cursor: pointer;
+        }
+        
+        .property-input[type="range"] {
+            height: 6px;
+            background: var(--border-light);
+            border: none;
+            border-radius: var(--radius-full);
+            outline: none;
+            cursor: pointer;
+            -webkit-appearance: none;
+        }
+        
+        .property-input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+            border: 2px solid var(--bg-card);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .property-input[type="number"] {
+            text-align: center;
+            font-weight: 600;
+        }
+        
+        textarea.property-input {
+            resize: vertical;
+            min-height: 60px;
+            line-height: 1.3;
+        }
+        
+        .delete-button {
+            width: 100%;
+            padding: var(--space-sm);
+            background: var(--color-danger);
+            color: var(--text-inverse);
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: var(--space-md);
+            transition: all var(--transition-fast);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-family: inherit;
+        }
+        
+        .delete-button:hover {
+            background: var(--color-danger-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+        }
+        
+        .property-style-buttons {
+            display: flex;
+            gap: var(--space-sm);
+            margin-top: var(--space-sm);
+        }
+        
+        .property-style-button {
+            flex: 1;
+            padding: var(--space-sm);
+            border: 2px solid var(--border-light);
+            background: var(--bg-card);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: bold;
+            font-size: var(--font-size-xs);
+            transition: all var(--transition-fast);
+            min-height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+        
+        .property-style-button:hover {
+            border-color: var(--color-primary);
+            background: var(--bg-muted);
+        }
+        
+        .property-style-button.active {
+            background: var(--color-primary);
+            color: var(--text-inverse);
+            border-color: var(--color-primary);
+        }
+        
+        @media (max-width: 768px) {
+            .tool-strip {
+                gap: 1px;
+            }
+            
+            .tool-item {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+            }
+            
+            .property-panel {
+                position: fixed;
+                bottom: 0;
+                right: 0;
+                left: 0;
+                top: auto;
+                transform: none;
+                width: auto;
+                border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+                max-height: 50vh;
+                overflow-y: auto;
+            }
+            
+            .tool-options {
+                position: fixed;
+                bottom: 80px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="editor-container">
+        <!-- 顶部工具栏 -->
+        <div class="top-toolbar">
+            <div class="editor-title">🎨 图片编辑器</div>
+            <div class="top-controls">
+                <button class="control-button cancel" id="cancelBtn">取消</button>
+                <button class="control-button download" id="downloadBtn">下载</button>
+                <button class="control-button save" id="saveBtn">保存</button>
+            </div>
+        </div>
+        
+        <!-- 画布区域 -->
+        <div class="canvas-area">
+            <canvas id="imageCanvas"></canvas>
+        </div>
+        
+        <!-- 底部工具栏 -->
+        <div class="bottom-toolbar">
+            <div class="toolbar-content">
+                <!-- 工具条 -->
+                <div class="tool-strip">
+                    <button class="tool-item active" data-tool="select" title="选择">⚪</button>
+                    <button class="tool-item" data-tool="crop" title="裁剪">✂️</button>
+                    <div class="tool-separator"></div>
+                    <button class="tool-item" data-tool="text" title="文字">T</button>
+                    <button class="tool-item" data-tool="brush" title="画笔">🖌️</button>
+                    <div class="tool-separator"></div>
+                    <button class="tool-item" data-tool="ellipse" title="椭圆">⭕</button>
+                    <button class="tool-item" data-tool="rectangle" title="正方形">⬜</button>
+                    <button class="tool-item" data-tool="highlight" title="高亮">🔆</button>
+                    <div class="tool-separator"></div>
+                    <button class="tool-item" data-tool="number" title="序号">①</button>
+                    <button class="tool-item" data-tool="mosaic" title="马赛克">🔲</button>
+                    <div class="tool-separator"></div>
+                    <button class="tool-item" data-tool="undo" title="撤销">↶</button>
+                </div>
+                
+                <!-- 选择工具选项 -->
+                <div class="tool-options" id="selectOptions">
+                    <div class="option-group">
+                        <span class="option-label">提示</span>
+                        <span>点击选择已添加的元素进行编辑</span>
+                    </div>
+                </div>
+                
+                <!-- 裁剪工具选项 -->
+                <div class="tool-options" id="cropOptions">
+                    <div class="option-group">
+                        <span class="option-label">操作</span>
+                        <span>拖动鼠标选择裁剪区域，选择完成后会弹出确认对话框</span>
+                    </div>
+                </div>
+                
+                <!-- 文字工具选项 -->
+                <div class="tool-options" id="textOptions">
+                    <div class="option-group">
+                        <span class="option-label">颜色</span>
+                        <input type="color" class="color-input" id="textColor" value="#ff0000">
+                        <span class="option-label">大小</span>
+                        <input type="range" class="size-input" id="textSize" min="12" max="150" value="22">
+                        <span class="size-display" id="textSizeDisplay">22px</span>
+                    </div>
+                    <div class="option-group">
+                        <span class="option-label">样式</span>
+                        <div class="style-buttons">
+                            <button class="style-button" id="textBold" title="加粗">B</button>
+                            <button class="style-button" id="textItalic" title="斜体" style="font-style: italic;">I</button>
+                            <button class="style-button" id="textUnderline" title="下划线" style="text-decoration: underline;">U</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 画笔工具选项 -->
+                <div class="tool-options" id="brushOptions">
+                    <div class="option-group">
+                        <span class="option-label">颜色</span>
+                        <input type="color" class="color-input" id="brushColor" value="#ff0000">
+                        <span class="option-label">粗细</span>
+                        <input type="range" class="size-input" id="brushSize" min="1" max="20" value="6">
+                        <span class="size-display" id="brushSizeDisplay">6px</span>
+                    </div>
+                </div>
+                
+                <!-- 椭圆工具选项 -->
+                <div class="tool-options" id="ellipseOptions">
+                    <div class="option-group">
+                        <span class="option-label">颜色</span>
+                        <input type="color" class="color-input" id="ellipseColor" value="#ff0000">
+                        <span class="option-label">线宽</span>
+                        <input type="range" class="size-input" id="ellipseStroke" min="1" max="10" value="6">
+                        <span class="size-display" id="ellipseStrokeDisplay">6px</span>
+                    </div>
+                </div>
+                
+                <!-- 正方形工具选项 -->
+                <div class="tool-options" id="rectangleOptions">
+                    <div class="option-group">
+                        <span class="option-label">颜色</span>
+                        <input type="color" class="color-input" id="rectangleColor" value="#ff0000">
+                        <span class="option-label">线宽</span>
+                        <input type="range" class="size-input" id="rectangleStroke" min="1" max="10" value="6">
+                        <span class="size-display" id="rectangleStrokeDisplay">6px</span>
+                    </div>
+                </div>
+                
+                <!-- 高亮工具选项 -->
+                <div class="tool-options" id="highlightOptions">
+                    <div class="option-group">
+                        <span class="option-label">高亮区域</span>
+                        <span class="size-display">完全透明显示</span>
+                    </div>
+                </div>
+                
+                <!-- 序号工具选项 -->
+                <div class="tool-options" id="numberOptions">
+                    <div class="option-group">
+                        <span class="option-label">选择数字</span>
+                        <div class="number-grid">
+                            <button class="number-button active" data-number="1">1</button>
+                            <button class="number-button" data-number="2">2</button>
+                            <button class="number-button" data-number="3">3</button>
+                            <button class="number-button" data-number="4">4</button>
+                            <button class="number-button" data-number="5">5</button>
+                            <button class="number-button" data-number="6">6</button>
+                            <button class="number-button" data-number="7">7</button>
+                            <button class="number-button" data-number="8">8</button>
+                            <button class="number-button" data-number="9">9</button>
+                            <button class="number-button" data-number="10">10</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 马赛克工具选项 -->
+                <div class="tool-options" id="mosaicOptions">
+                    <div class="option-group">
+                        <span class="option-label">强度</span>
+                        <input type="range" class="size-input" id="mosaicIntensity" min="5" max="30" value="10">
+                        <span class="size-display" id="mosaicIntensityDisplay">10px</span>
+                        <span class="option-label">大小</span>
+                        <input type="range" class="size-input" id="mosaicSize" min="10" max="50" value="20">
+                        <span class="size-display" id="mosaicSizeDisplay">20px</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 属性面板 -->
+        <div class="property-panel" id="propertyPanel">
+            <div class="property-title">元素属性</div>
+            <div id="propertyContent">
+                <!-- 动态内容 -->
+            </div>
+            <button class="delete-button" id="deleteElement">删除元素</button>
+        </div>
+    </div>
+    
+    <script src="bundles/editor.min.js"></script>
+</body>
+</html>
