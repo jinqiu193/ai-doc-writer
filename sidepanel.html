@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>AI文档智写</title>
+    <style>
+      /* ========================================
+         设计系统变量 - Design System Tokens
+         ======================================== */
+      :root {
+        /* 扁平风格颜色系统 - 蓝色主题 */
+        --color-primary: #3b82f6;
+        --color-primary-hover: #2563eb;
+        --color-primary-light: #dbeafe;
+        --color-success: #22c55e;
+        --color-success-hover: #16a34a;
+        --color-success-light: #bbf7d0;
+        --color-danger: #ef4444;
+        --color-danger-hover: #dc2626;
+        --color-danger-light: #fee2e2;
+        --color-warning: #f59e0b;
+        --color-info: #3b82f6;
+        
+        /* 扁平背景色 */
+        --bg-page: #eff6ff;
+        --bg-card: #ffffff;
+        --bg-elevated: #ffffff;
+        --bg-muted: #f3f4f6;
+        --bg-input: #ffffff;
+        
+        /* 扁平文字色 */
+        --text-primary: #111827;
+        --text-secondary: #6b7280;
+        --text-muted: #9ca3af;
+        --text-inverse: #ffffff;
+        
+        /* 扁平边框色 */
+        --border-light: #e5e7eb;
+        --border-default: #d1d5db;
+        --border-strong: #9ca3af;
+        
+        /* 扁平阴影 - 几乎无阴影 */
+        --shadow-sm: none;
+        --shadow-md: none;
+        --shadow-lg: none;
+        --shadow-glow-primary: none;
+        --shadow-glow-success: none;
+        
+        /* 扁平圆角系统 */
+        --radius-sm: 4px;
+        --radius-md: 6px;
+        --radius-lg: 8px;
+        --radius-full: 9999px;
+        
+        /* 间距系统 */
+        --space-xs: 4px;
+        --space-sm: 8px;
+        --space-md: 12px;
+        --space-lg: 16px;
+        --space-xl: 24px;
+        
+        /* 过渡动画 */
+        --transition-fast: 100ms ease;
+        --transition-normal: 150ms ease;
+        --transition-slow: 200ms ease;
+        
+        /* 字体 */
+        --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        --font-size-xs: 11px;
+        --font-size-sm: 12px;
+        --font-size-base: 13px;
+        --font-size-md: 14px;
+        --font-size-lg: 16px;
+        
+        /* 工具栏 */
+        --toolbar-height: 36px;
+        --toolbar-bg: #ffffff;
+        --toolbar-border: #e5e7eb;
+      }
+
+      /* 深色主题 */
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --color-primary: #60a5fa;
+          --color-primary-hover: #3b82f6;
+          --color-primary-light: #1e3a8a;
+          --color-success: #4ade80;
+          --color-success-hover: #22c55e;
+          --color-success-light: #166534;
+          --color-danger: #f87171;
+          --color-danger-hover: #ef4444;
+          --color-danger-light: #450a0a;
+          --color-warning: #fbbf24;
+          --color-info: #60a5fa;
+          
+          --bg-page: #111827;
+          --bg-card: #1f2937;
+          --bg-elevated: #374151;
+          --bg-muted: #374151;
+          --bg-input: #1f2937;
+          
+          --text-primary: #f9fafb;
+          --text-secondary: #d1d5db;
+          --text-muted: #9ca3af;
+          --text-inverse: #111827;
+          
+          --border-light: #374151;
+          --border-default: #4b5563;
+          --border-strong: #6b7280;
+          
+          --shadow-sm: none;
+          --shadow-md: none;
+          --shadow-lg: none;
+          --shadow-glow-primary: none;
+          --shadow-glow-success: none;
+          
+          --toolbar-bg: #1f2937;
+          --toolbar-border: #374151;
+        }
+      }
+
+      /* 隐藏滚动条 */
+      ::-webkit-scrollbar { display: none; }
+      * { scrollbar-width: none; -ms-overflow-style: none; }
+
+      /* 基础样式 */
+      body {
+        font-family: var(--font-sans);
+        background: var(--bg-page);
+        color: var(--text-primary);
+        margin: 0;
+        padding: var(--space-lg) var(--space-md);
+        padding-bottom: calc(var(--toolbar-height) + var(--space-lg));
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* ========================================
+         动画关键帧
+         ======================================== */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      @keyframes slideInRight {
+        from {
+          opacity: 0;
+          transform: translateX(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+
+      @keyframes ripple {
+        to {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+
+      @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+      }
+
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-3px); }
+      }
+
+      @keyframes scaleIn {
+        from {
+          opacity: 0;
+          transform: scale(0.9);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      @keyframes gradientFlow {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+      }
+
+      /* ========================================
+         按钮系统 - 统一文字按钮
+         ======================================== */
+      
+      /* 基础按钮样式 - 统一风格 */
+      button {
+        font-family: inherit;
+        font-size: var(--font-size-sm);
+        font-weight: 500;
+        border: none;
+        cursor: pointer;
+        padding: 8px 16px;
+        border-radius: 20px;
+        transition: all var(--transition-fast);
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* 按钮涟漪效果 */
+      button::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 5px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.5);
+        opacity: 0;
+        border-radius: 50%;
+        transform: scale(1) translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s, opacity 0.6s;
+      }
+
+      button:active::after {
+        width: 200px;
+        height: 200px;
+        opacity: 0;
+        animation: ripple 0.6s linear;
+      }
+
+      /* 主按钮容器 */
+      .button-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: var(--space-xl);
+        padding: 0 var(--space-md);
+        gap: var(--space-sm);
+        animation: fadeIn 0.4s ease;
+      }
+
+      /* 统一按钮基础样式 */
+      .btn {
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: var(--font-size-sm);
+        font-weight: 500;
+        transition: all var(--transition-fast);
+      }
+
+      /* 录制按钮 */
+      #toggleBtn {
+        background: var(--color-success);
+        color: var(--text-inverse);
+        padding: 8px 16px;
+        border-radius: var(--radius-full);
+        font-size: var(--font-size-sm);
+        border: 2px solid var(--color-success);
+      }
+      #toggleBtn:hover {
+        background: var(--color-success-hover);
+        border-color: var(--color-success-hover);
+      }
+      #toggleBtn:active {
+        background: var(--color-success);
+        border-color: var(--color-success);
+      }
+      #toggleBtn.recording {
+        background: var(--color-danger);
+        border-color: var(--color-danger);
+      }
+      #toggleBtn.recording:hover {
+        background: var(--color-danger-hover);
+        border-color: var(--color-danger-hover);
+      }
+
+      /* AI撰写按钮 - 绿色底白色字 */
+      .ai-write-btn {
+        background: var(--color-primary);
+        color: var(--text-inverse);
+        border: 2px solid var(--color-primary);
+        padding: 8px 16px;
+        border-radius: var(--radius-full);
+        font-size: var(--font-size-sm);
+      }
+      .ai-write-btn:hover:not(:disabled) {
+        background: var(--color-primary-hover);
+        border-color: var(--color-primary-hover);
+      }
+      .ai-write-btn:active {
+        background: var(--color-primary);
+        border-color: var(--color-primary);
+      }
+      .ai-write-btn:disabled {
+        background: var(--bg-muted);
+        color: var(--text-muted);
+        border-color: var(--border-light);
+        cursor: not-allowed;
+      }
+
+      /* 导出按钮 */
+      #exportBtn {
+        background: var(--color-primary);
+        color: var(--text-inverse);
+        padding: 8px 16px;
+        border-radius: var(--radius-full);
+        font-size: var(--font-size-sm);
+        border: 2px solid var(--color-primary);
+      }
+      #exportBtn:hover {
+        background: var(--color-primary-hover);
+        border-color: var(--color-primary-hover);
+      }
+      #exportBtn:active {
+        background: var(--color-primary);
+        border-color: var(--color-primary);
+      }
+      #exportBtn:disabled {
+        background: var(--bg-muted);
+        color: var(--text-muted);
+        border-color: var(--border-light);
+        cursor: not-allowed;
+      }
+
+      /* 设置按钮 */
+      #settingsBtn {
+        background: var(--bg-muted);
+        color: var(--text-secondary);
+        padding: 8px 16px;
+        border-radius: var(--radius-full);
+        font-size: var(--font-size-sm);
+        border: 2px solid var(--border-light);
+      }
+      #settingsBtn:hover {
+        background: var(--bg-card);
+        color: var(--text-primary);
+        border-color: var(--color-primary);
+      }
+
+      /* 工具栏按钮 */
+      .toolbar-btn {
+        background: var(--bg-muted);
+        color: var(--text-secondary);
+        padding: 8px 16px;
+        border-radius: var(--radius-full);
+        font-size: var(--font-size-sm);
+        border: 2px solid var(--border-light);
+      }
+      .toolbar-btn:hover:not(:disabled) {
+        background: var(--bg-card);
+        color: var(--text-primary);
+        border-color: var(--color-primary);
+      }
+      .toolbar-btn:disabled {
+        color: var(--text-muted);
+        cursor: not-allowed;
+        border-color: var(--border-light);
+      }
+
+      /* 复制按钮 - 统一为工具栏按钮样式 */
+      #copyBtn {
+        background: var(--bg-muted);
+        color: var(--text-secondary);
+        padding: 8px 16px;
+        border-radius: var(--radius-full);
+        font-size: var(--font-size-sm);
+        border: 2px solid var(--border-light);
+      }
+      #copyBtn:hover:not(:disabled) {
+        background: var(--bg-card);
+        color: var(--text-primary);
+        border-color: var(--color-primary);
+      }
+
+      /* 清空按钮 - 统一为工具栏按钮样式 */
+      #clearBtn {
+        background: var(--bg-muted);
+        color: var(--color-danger);
+        padding: 8px 16px;
+        border-radius: var(--radius-full);
+        font-size: var(--font-size-sm);
+        border: 2px solid var(--color-danger);
+      }
+      #clearBtn:hover:not(:disabled) {
+        background: var(--color-danger);
+        color: var(--text-inverse);
+      }
+
+      /* 复选框标签 */
+      .toolbar-checkbox {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-xs);
+        padding: 6px 12px;
+        border-radius: var(--radius-sm);
+        background: var(--bg-muted);
+        cursor: pointer;
+        font-size: var(--font-size-xs);
+        color: var(--text-secondary);
+        transition: all var(--transition-fast);
+        user-select: none;
+        border: 1px solid transparent;
+      }
+      .toolbar-checkbox:hover { 
+        background: var(--border-light); 
+        border-color: var(--border-default);
+      }
+      .toolbar-checkbox input[type="checkbox"] {
+        width: 12px; height: 12px; margin: 0;
+        cursor: pointer;
+        accent-color: var(--color-success);
+      }
+
+      /* ========================================
+         工具栏 - Toolbar
+         ======================================== */
+      .toolbar {
+        position: fixed; bottom: 0; left: 0; right: 0;
+        display: flex; align-items: center; gap: var(--space-sm);
+        padding: var(--space-sm) var(--space-md);
+        background: var(--toolbar-bg);
+        border-top: 1px solid var(--toolbar-border);
+        z-index: 1000; justify-content: space-between;
+        height: var(--toolbar-height);
+      }
+      .toolbar-left { 
+        display: flex; align-items: center; gap: var(--space-xs); 
+        flex-wrap: wrap; 
+      }
+
+      /* ========================================
+         卡片与列表 - Cards & Lists
+         ======================================== */
+      ul { list-style: none; padding: 0; width: 100%; margin: 0; }
+      li {
+        background-color: var(--bg-card);
+        color: var(--text-primary);
+        margin: var(--space-sm) 0;
+        padding: var(--space-md);
+        border-radius: var(--radius-md);
+        border: 2px solid var(--border-light);
+        transition: all var(--transition-fast);
+      }
+      li:hover { 
+        border-color: var(--color-primary);
+        background-color: var(--color-primary-light);
+      }
+      li.dragging { opacity: 0.5; }
+      li.drag-over { 
+        border: 2px dashed var(--color-primary); 
+        background: var(--color-primary-light);
+      }
+
+      /* 步骤计数器 */
+      .step-counter {
+        background-color: var(--bg-muted);
+        color: var(--text-secondary);
+        padding: var(--space-md);
+        margin: var(--space-sm) 0;
+        border-radius: var(--radius-md);
+        text-align: center;
+        font-size: var(--font-size-md);
+        font-weight: 500;
+        border: 2px solid var(--border-light);
+      }
+      .step-counter.warning {
+        background: var(--color-warning);
+        color: var(--text-inverse);
+        border-color: var(--color-warning);
+      }
+
+      /* ========================================
+         设置面板 - Settings Panel
+         ======================================== */
+      #settingsPanel {
+        position: fixed; top: 100px; right: 10%;
+        width: 260px;
+        background-color: var(--bg-card);
+        color: var(--text-primary);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        padding: var(--space-lg);
+        z-index: 1000; display: none;
+      }
+      .setting-item { margin-bottom: var(--space-md); }
+      .setting-item label {
+        display: flex; align-items: center; cursor: pointer;
+        font-size: var(--font-size-md); color: var(--text-primary);
+      }
+      .setting-item input[type="checkbox"] { margin-right: var(--space-sm); transform: scale(1.1); }
+      .setting-item .description {
+        font-size: var(--font-size-xs); color: var(--text-muted);
+        margin-top: var(--space-xs); margin-left: 22px;
+      }
+      .char-counter {
+        font-size: var(--font-size-xs); color: var(--text-muted);
+        text-align: right; margin-top: calc(var(--space-xs) * -1);
+        margin-bottom: var(--space-sm);
+      }
+      .char-counter.warning { color: var(--color-warning); }
+      .char-counter.danger { color: var(--color-danger); }
+
+      /* 输入框 */
+      .step-title-input {
+        width: 100%; padding: var(--space-md);
+        margin-bottom: var(--space-md);
+        border: 2px solid var(--border-light);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-lg); font-weight: 600;
+        font-family: inherit;
+        background-color: var(--bg-input);
+        color: var(--text-primary);
+        resize: none; min-height: 44px; line-height: 1.4;
+        box-sizing: border-box;
+        transition: all var(--transition-fast);
+      }
+      .step-title-input:focus {
+        outline: none; 
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 4px var(--color-primary-light), var(--shadow-md);
+        transform: translateY(-1px);
+      }
+      .step-title-input:hover:not(:focus) {
+        border-color: var(--border-default);
+      }
+      .step-title-input::placeholder { color: var(--text-muted); }
+
+      /* ========================================
+         进度条 - Progress Bars
+         ======================================== */
+      #uploadProgress {
+        display: none;
+        width: 80%;
+        margin: var(--space-md) 10%;
+        padding: var(--space-lg);
+        background: var(--bg-card);
+        border-radius: var(--radius-lg);
+        border: 2px solid var(--border-light);
+      }
+      #uploadProgress > div:first-child { font-size: var(--font-size-md); font-weight: 500; margin-bottom: var(--space-sm); }
+      #uploadProgressBar {
+        background: var(--color-primary);
+        height: 8px; border-radius: var(--radius-full);
+        transition: width var(--transition-normal);
+      }
+      #uploadProgress .progress-track {
+        background: var(--border-light);
+        height: 8px; border-radius: var(--radius-full); overflow: hidden;
+      }
+      #uploadStatus { font-size: var(--font-size-sm); margin-top: var(--space-sm); color: var(--text-secondary); }
+
+      /* 智谱识别进度条 */
+      #zhipuProgress {
+        display: none;
+        width: 80%;
+        margin: var(--space-md) 10%;
+        padding: var(--space-lg);
+        background: var(--color-primary);
+        border-radius: var(--radius-lg);
+        color: var(--text-inverse);
+      }
+      #zhipuProgress .progress-header {
+        display: flex; align-items: center; gap: var(--space-sm);
+        margin-bottom: var(--space-md);
+        font-size: var(--font-size-md); font-weight: 600;
+      }
+      #zhipuProgress .progress-track {
+        background: rgba(255,255,255,0.25);
+        height: 6px; border-radius: var(--radius-full); overflow: hidden;
+      }
+      #zhipuProgressBar {
+        background: white; height: 100%;
+        border-radius: var(--radius-full);
+        transition: width var(--transition-normal);
+      }
+      #zhipuProgressText { font-size: var(--font-size-sm); margin-top: var(--space-sm); opacity: 0.9; }
+
+      #fileInput { display: none; }
+
+      /* 步骤图片样式 */
+
+      /* 进度条通用样式 */
+      .progress-label {
+        font-size: var(--font-size-md);
+        font-weight: 500;
+        margin-bottom: var(--space-sm);
+      }
+      .progress-track {
+        background: var(--border-light);
+        height: 8px;
+        border-radius: var(--radius-full);
+        overflow: hidden;
+      }
+      #uploadProgressBar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--color-success), var(--color-primary));
+        border-radius: var(--radius-full);
+        transition: width var(--transition-normal);
+        width: 0%;
+      }
+      #uploadStatus {
+        font-size: var(--font-size-sm);
+        margin-top: var(--space-sm);
+        color: var(--text-secondary);
+      }
+
+      /* 智谱进度条 */
+      #zhipuProgress {
+        display: none;
+        margin: var(--space-md) 0;
+        padding: var(--space-lg);
+        background: linear-gradient(135deg, var(--color-primary), #8b5cf6);
+        border-radius: var(--radius-lg);
+        color: var(--text-inverse);
+        box-shadow: var(--shadow-lg), var(--shadow-glow-primary);
+      }
+      #zhipuProgress .progress-header {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+        margin-bottom: var(--space-md);
+        font-size: var(--font-size-md);
+        font-weight: 600;
+      }
+      #zhipuProgress .progress-track {
+        background: rgba(255,255,255,0.25);
+      }
+      #zhipuProgressBar {
+        height: 100%;
+        background: white;
+        border-radius: var(--radius-full);
+        transition: width var(--transition-normal);
+        width: 0%;
+      }
+      #zhipuProgressText {
+        font-size: var(--font-size-sm);
+        margin-top: var(--space-sm);
+        opacity: 0.9;
+      }
+
+      /* 拖拽区域样式 - 两边各留10%空间 */
+      #dragDropArea {
+        width: 80%;
+        margin-left: 10%;
+        margin-right: 10%;
+        padding: var(--space-xl) var(--space-lg);
+        border: 2px dashed var(--border-default);
+        border-radius: var(--radius-lg);
+        background: var(--bg-card);
+        text-align: center;
+        cursor: pointer;
+        transition: all var(--transition-normal);
+        animation: fadeIn 0.4s ease;
+      }
+      #dragDropArea:hover {
+        border-color: var(--color-primary);
+        background: var(--color-primary-light);
+        transform: scale(1.02);
+      }
+      #dragDropArea.drag-over {
+        border-color: var(--color-success);
+        background: var(--color-success-light);
+        transform: scale(1.02);
+      }
+      #dragDropArea .drag-title {
+        font-size: var(--font-size-sm);
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-bottom: var(--space-xs);
+      }
+      #dragDropArea .drag-subtitle {
+        font-size: var(--font-size-xs);
+        color: var(--text-muted);
+      }
+      #dragDropArea .drag-hint {
+        font-size: var(--font-size-xs);
+        color: var(--text-muted);
+        opacity: 0.7;
+        margin-top: var(--space-xs);
+      }
+
+      /* 骨架屏样式 - 加载状态 */
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          var(--bg-muted) 25%,
+          var(--border-light) 50%,
+          var(--bg-muted) 75%
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.5s ease-in-out infinite;
+        border-radius: var(--radius-md);
+      }
+
+      .skeleton-card {
+        background-color: var(--bg-card);
+        border-radius: var(--radius-md);
+        padding: var(--space-lg);
+        margin: var(--space-sm) 0;
+        border: 1px solid var(--border-light);
+      }
+
+      .skeleton-line {
+        height: 16px;
+        margin-bottom: var(--space-sm);
+      }
+
+      .skeleton-line:last-child {
+        width: 60%;
+        margin-bottom: 0;
+      }
+
+      .skeleton-image {
+        width: 100%;
+        height: 200px;
+        margin-bottom: var(--space-md);
+      }
+
+      .skeleton-badge {
+        display: inline-block;
+        width: 60px;
+        height: 24px;
+        margin-bottom: var(--space-sm);
+      }
+
+      /* 回到顶部按钮 - 统一为工具栏按钮样式 */
+      #scrollToTopBtn {
+        background: var(--bg-muted);
+        color: var(--text-secondary);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: var(--font-size-sm);
+        transition: opacity var(--transition-fast), visibility var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
+      }
+      #scrollToTopBtn:hover {
+        background: var(--border-light);
+        color: var(--text-primary);
+      }
+
+      /* 步骤图片样式 */
+      .step-image {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        margin: 0;
+        transition: all 0.3s ease;
+        border: 1px solid var(--border-color);
+        background-color: var(--bg-secondary);
+      }
+
+      .step-image:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        border-color: var(--border-hover);
+      }
+
+      /* 导出下拉菜单样式 */
+      .export-dropdown {
+        position: relative;
+        display: inline-block;
+      }
+
+      .dropdown-content {
+        display: none;
+        width: 160px;
+        position: absolute;
+        top: calc(100% + 4px);
+        left: 0;
+        background: var(--bg-card);
+        border: 2px solid var(--border-light);
+        border-radius: var(--radius-lg);
+        z-index: 1000;
+        overflow: hidden;
+        margin-top: 4px;
+      }
+
+      .export-dropdown.active .dropdown-content {
+        display: block;
+      }
+
+      .dropdown-item {
+        padding: 12px 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all var(--transition-fast);
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text-primary);
+        position: relative;
+      }
+
+      .dropdown-item::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: var(--color-primary);
+        opacity: 0;
+        transition: opacity var(--transition-fast);
+      }
+
+      .dropdown-item:hover {
+        background: var(--color-primary-light);
+        color: var(--color-primary-hover);
+        padding-left: 20px;
+      }
+
+      .dropdown-item:hover::before {
+        opacity: 1;
+      }
+
+      .dropdown-item:active {
+        background: var(--bg-muted);
+      }
+
+      .dropdown-item .icon {
+        font-size: 16px;
+        margin-bottom: 0;
+        filter: none;
+      }
+
+      /* 禁用状态下的下拉菜单 */
+      .export-dropdown button:disabled + .dropdown-content {
+        display: none !important;
+      }
+
+      /* 深色主题下的图片优化 */
+      @media (prefers-color-scheme: dark) {
+        .step-image {
+          border-color: var(--border-light);
+        }
+
+        .step-image:hover {
+          border-color: var(--color-primary);
+        }
+
+        .dropdown-content {
+          background: var(--bg-card);
+          border-color: var(--border-light);
+        }
+
+        .dropdown-item {
+          color: var(--text-primary);
+        }
+
+        .dropdown-item:hover {
+          background: var(--color-primary-light);
+          color: var(--color-primary);
+        }
+      }
+
+      /* 为深色主题优化滚动条 */
+      @media (prefers-color-scheme: dark) {
+        ::-webkit-scrollbar {
+          width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+          background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+          background: var(--border-color);
+          border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+          background: var(--border-hover);
+        }
+      }
+
+      /* 文本步骤弹窗样式 */
+      .text-step-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .text-step-modal.active {
+        display: flex;
+      }
+
+      .text-step-modal-content {
+        background: var(--bg-card);
+        border-radius: var(--radius-lg);
+        padding: var(--space-xl);
+        width: 90%;
+        max-width: 500px;
+        box-shadow: var(--shadow-lg);
+        animation: modalSlideIn 0.25s ease;
+      }
+
+      @keyframes modalSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .text-step-modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-lg);
+      }
+
+      .text-step-modal-title {
+        font-size: var(--font-size-lg);
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .text-step-modal-close {
+        background: none;
+        border: none;
+        font-size: 20px;
+        cursor: pointer;
+        color: var(--text-muted);
+        padding: 4px;
+        border-radius: 4px;
+        transition: all var(--transition-fast);
+      }
+
+      .text-step-modal-close:hover {
+        background: var(--bg-muted);
+        color: var(--text-primary);
+      }
+
+      .text-step-modal-body {
+        margin-bottom: var(--space-lg);
+      }
+
+      .text-step-modal-body label {
+        display: block;
+        font-size: var(--font-size-sm);
+        font-weight: 500;
+        color: var(--text-secondary);
+        margin-bottom: var(--space-sm);
+      }
+
+      .text-step-modal-body textarea {
+        width: 100%;
+        min-height: 120px;
+        padding: var(--space-md);
+        border: 1px solid var(--border-light);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-base);
+        font-family: inherit;
+        background: var(--bg-input);
+        color: var(--text-primary);
+        resize: vertical;
+        box-sizing: border-box;
+        transition: all var(--transition-fast);
+      }
+
+      .text-step-modal-body textarea:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px var(--color-primary-light);
+      }
+
+      .text-step-modal-body textarea::placeholder {
+        color: var(--text-muted);
+      }
+
+      .text-step-modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: var(--space-md);
+      }
+
+      .text-step-modal-btn {
+        padding: var(--space-md) var(--space-xl);
+        border-radius: var(--radius-md);
+        font-size: var(--font-size-sm);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all var(--transition-fast);
+        border: none;
+      }
+
+      .text-step-modal-btn.cancel {
+        background: var(--bg-muted);
+        color: var(--text-secondary);
+      }
+
+      .text-step-modal-btn.cancel:hover {
+        background: var(--border-light);
+        color: var(--text-primary);
+      }
+
+      .text-step-modal-btn.confirm {
+        background: var(--color-primary);
+        color: var(--text-inverse);
+      }
+
+      .text-step-modal-btn.confirm:hover {
+        background: var(--color-primary-hover);
+      }
+
+      .text-step-modal-btn.confirm:disabled {
+        background: var(--border-light);
+        color: var(--text-muted);
+        cursor: not-allowed;
+      }
+
+      /* 纯文本步骤样式 */
+      .step-text-only {
+        background-color: var(--bg-card);
+        color: var(--text-primary);
+        margin: var(--space-sm) 0;
+        padding: var(--space-md);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-light);
+        transition: all var(--transition-normal);
+        position: relative;
+      }
+
+      .step-text-only:hover {
+        box-shadow: var(--shadow-md);
+        border-color: var(--border-default);
+      }
+
+      .step-text-only .text-content {
+        font-size: var(--font-size-base);
+        line-height: 1.6;
+        color: var(--text-primary);
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+
+      .step-text-only .text-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: var(--color-primary-light);
+        color: var(--color-primary);
+        padding: 2px 8px;
+        border-radius: var(--radius-full);
+        font-size: var(--font-size-xs);
+        font-weight: 500;
+        margin-bottom: var(--space-sm);
+      }
+
+      @media (prefers-color-scheme: dark) {
+        .text-step-modal-content {
+          background: var(--bg-card);
+        }
+
+        .text-step-modal-body textarea {
+          border-color: var(--border-default);
+        }
+
+        .text-step-modal-btn.cancel {
+          background: var(--bg-muted);
+        }
+
+        .text-step-modal-btn.cancel:hover {
+          background: var(--border-light);
+        }
+
+        .step-text-only .text-badge {
+          background: var(--color-primary-light);
+          color: var(--color-primary);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- 按钮容器 -->
+    <div class="button-container">
+      <button id="toggleBtn">录制</button>
+      <button id="zhipuRecognizeBtn" class="ai-write-btn" title="AI智能撰写步骤描述">AI撰写</button>
+      <div class="export-dropdown">
+        <button id="exportBtn" disabled>导出</button>
+        <div id="exportDropdown" class="dropdown-content">
+          <div class="dropdown-item" data-type="word">导出Word</div>
+          <div class="dropdown-item" data-type="video">导出视频</div>
+        </div>
+      </div>
+      <button id="addTextStepBtn" class="toolbar-btn" title="添加纯文本步骤">文本</button>
+      <button id="settingsBtn">设置</button>
+    </div>
+
+    <!-- 上传进度显示 -->
+    <div
+      id="uploadProgress"
+      style="
+        display: none;
+        margin: 10px 0;
+        padding: 10px;
+        background-color: var(--bg-tertiary);
+        border-radius: 5px;
+      "
+    >
+      <div class="progress-label">上传进度</div>
+      <div class="progress-track">
+        <div id="uploadProgressBar"></div>
+      </div>
+      <div id="uploadStatus"></div>
+    </div>
+
+    <!-- 智谱识别进度显示 -->
+    <div id="zhipuProgress">
+      <div class="progress-header">
+        <span id="zhipuProgressTitle">智谱识别中...</span>
+      </div>
+      <div class="progress-track">
+        <div id="zhipuProgressBar"></div>
+      </div>
+      <div id="zhipuProgressText">准备开始...</div>
+    </div>
+
+    <!-- 步骤列表 -->
+    <ul id="stepsList"></ul>
+
+    <!-- 拖拽区域 -->
+    <div id="dragDropArea">
+      <div class="drag-title">拖拽图片到这里</div>
+      <div class="drag-subtitle">支持 PNG、JPG、JPEG、GIF</div>
+      <div class="drag-subtitle drag-hint">或按 Ctrl+V 粘贴图片</div>
+      <input type="file" id="fileInput" accept="image/*" style="display: none;">
+    </div>
+
+    <!-- 工具栏 -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <button id="copyBtn" class="toolbar-btn" title="复制 Markdown 内容">复制</button>
+        <button id="clearBtn" class="toolbar-btn" disabled title="清空所有步骤">清空</button>
+        <label class="toolbar-checkbox" title="网页元素高亮截图">
+          <input type="checkbox" id="enableDomHighlight" />
+          <span>元素高亮</span>
+        </label>
+      </div>
+      <div class="toolbar-right">
+        <button id="scrollToTopBtn" class="toolbar-btn" title="回到顶部" style="visibility: hidden">↑顶部</button>
+      </div>
+    </div>
+
+    <!-- 添加文本步骤弹窗 -->
+    <div id="textStepModal" class="text-step-modal">
+      <div class="text-step-modal-content">
+        <div class="text-step-modal-header">
+          <span class="text-step-modal-title">📝 添加文本步骤</span>
+          <button class="text-step-modal-close" id="closeTextStepModal">×</button>
+        </div>
+        <div class="text-step-modal-body">
+          <label for="textStepContent">输入步骤内容</label>
+          <textarea id="textStepContent" placeholder="请输入步骤描述文字...&#10;&#10;提示：&#10;• 输入标题或关键词，AI 撰写会以它为主题展开内容&#10;• 输入完整的步骤说明，AI 会参考此内容辅助分析图片"></textarea>
+        </div>
+        <div class="text-step-modal-footer">
+          <button class="text-step-modal-btn cancel" id="cancelTextStep">取消</button>
+          <button class="text-step-modal-btn confirm" id="confirmTextStep">确认添加</button>
+        </div>
+      </div>
+    </div>
+    <script src="bundles/docx.min.js"></script>
+        <script src="bundles/pptx-export-v2.min.js"></script>
+    <script src="bundles/zhipu-vision.min.js"></script>
+    <script src="bundles/zhipu-recognize.min.js"></script>
+    <script src="bundles/zhipu-export.min.js"></script>
+
+    <script src="bundles/sidepanel.min.js"></script>
+    <script src="bundles/text-step.min.js"></script>
+  </body>
+</html>
