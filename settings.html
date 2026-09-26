@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AI文档智写 - 设置</title>
+    <style>
+        :root {
+            --color-primary: #3b82f6;
+            --color-primary-hover: #2563eb;
+            --color-primary-light: #dbeafe;
+            --color-success: #22c55e;
+            --color-success-hover: #16a34a;
+            --color-success-light: #d1fae5;
+            --color-danger: #ef4444;
+            --color-danger-hover: #dc2626;
+            --color-danger-light: #fee2e2;
+            --color-warning: #f59e0b;
+            --color-info: #3b82f6;
+            
+            --bg-page: #eff6ff;
+            --bg-card: #ffffff;
+            --bg-elevated: #ffffff;
+            --bg-muted: #f3f4f6;
+            --bg-input: #ffffff;
+            
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-muted: #9ca3af;
+            --text-inverse: #ffffff;
+            
+            --border-light: #e5e7eb;
+            --border-default: #d1d5db;
+            --border-strong: #9ca3af;
+            
+            --shadow-sm: none;
+            --shadow-md: none;
+            --shadow-lg: none;
+            --shadow-glow-primary: none;
+            
+            --radius-sm: 4px;
+            --radius-md: 6px;
+            --radius-lg: 8px;
+            --radius-full: 9999px;
+            
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 12px;
+            --space-lg: 16px;
+            --space-xl: 24px;
+            
+            --transition-fast: 100ms ease;
+            --transition-normal: 150ms ease;
+            --transition-slow: 200ms ease;
+            
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-size-xs: 11px;
+            --font-size-sm: 12px;
+            --font-size-base: 13px;
+            --font-size-md: 14px;
+            --font-size-lg: 16px;
+            --font-size-xl: 20px;
+            --font-size-2xl: 28px;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-primary: #60a5fa;
+                --color-primary-hover: #3b82f6;
+                --color-primary-light: #1e3a8a;
+                --color-success: #4ade80;
+                --color-success-hover: #22c55e;
+                --color-success-light: #166534;
+                --color-danger: #f87171;
+                --color-danger-hover: #ef4444;
+                --color-danger-light: #450a0a;
+                --color-warning: #fbbf24;
+                --color-info: #60a5fa;
+                
+                --bg-page: #111827;
+                --bg-card: #1f2937;
+                --bg-elevated: #374151;
+                --bg-muted: #374151;
+                --bg-input: #1f2937;
+                
+                --text-primary: #f9fafb;
+                --text-secondary: #d1d5db;
+                --text-muted: #9ca3af;
+                --text-inverse: #111827;
+                
+                --border-light: #374151;
+                --border-default: #4b5563;
+                --border-strong: #6b7280;
+                
+                --shadow-sm: none;
+                --shadow-md: none;
+                --shadow-lg: none;
+                --shadow-glow-primary: none;
+            }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        ::-webkit-scrollbar { display: none; }
+        * { scrollbar-width: none; -ms-overflow-style: none; }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-page);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: var(--space-xl);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--color-primary), #8b5cf6);
+            color: var(--text-inverse);
+            padding: var(--space-xl) calc(var(--space-xl) * 2);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--space-xl);
+            box-shadow: var(--shadow-lg), var(--shadow-glow-primary);
+        }
+
+        .header h1 {
+            font-size: var(--font-size-2xl);
+            font-weight: 500;
+            margin-bottom: var(--space-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: var(--font-size-md);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            color: var(--color-primary);
+            text-decoration: none;
+            font-size: var(--font-size-md);
+            font-weight: 500;
+            margin-bottom: var(--space-xl);
+            padding: var(--space-sm) var(--space-md);
+            border-radius: var(--radius-sm);
+            transition: all var(--transition-fast);
+        }
+
+        .back-link:hover {
+            background: var(--color-primary-light);
+            color: var(--color-primary-hover);
+        }
+
+        .section {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-xl);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+        }
+
+        .section-title {
+            font-size: var(--font-size-xl);
+            font-weight: 500;
+            margin-bottom: var(--space-xl);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            color: var(--text-primary);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-lg);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-xl);
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--space-sm);
+            font-size: var(--font-size-md);
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: var(--space-md) var(--space-lg);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-md);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            transition: all var(--transition-fast);
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 4px var(--color-primary-light);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: var(--space-md) var(--space-lg);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-md);
+            background: var(--bg-input);
+            color: var(--text-primary);
+            transition: all var(--transition-fast);
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 4px var(--color-primary-light);
+        }
+
+        .button-group {
+            display: flex;
+            gap: var(--space-md);
+            margin-top: var(--space-xl);
+        }
+
+        .btn {
+            padding: var(--space-md) var(--space-xl);
+            border: none;
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-md);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-sm);
+            min-width: 120px;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--color-primary);
+            color: var(--text-inverse);
+        }
+
+        .btn-primary:hover {
+            background: var(--color-primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-success {
+            background: var(--color-success);
+            color: var(--text-inverse);
+        }
+
+        .btn-success:hover {
+            background: var(--color-success-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .status-message {
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-md);
+            margin-top: var(--space-lg);
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-success {
+            background: var(--color-success-light);
+            color: var(--color-success);
+            border: 1px solid var(--color-success);
+        }
+
+        .status-error {
+            background: var(--color-danger-light);
+            color: var(--color-danger);
+            border: 1px solid var(--color-danger);
+        }
+
+        .help-card {
+            background: var(--bg-muted);
+            padding: var(--space-xl);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-base);
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-top: var(--space-xl);
+            border: 1px solid var(--border-light);
+        }
+
+        .help-card strong {
+            color: var(--text-primary);
+        }
+
+        .help-card ol {
+            margin: var(--space-md) 0;
+            padding-left: calc(var(--space-xl) + var(--space-sm));
+        }
+
+        .help-card li {
+            margin-bottom: var(--space-sm);
+        }
+
+        .feature-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-lg);
+            background: var(--bg-muted);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-lg);
+            border: 1px solid var(--border-light);
+        }
+
+        .toggle-info {
+            flex: 1;
+            pointer-events: none;
+        }
+
+        .toggle-title {
+            font-weight: 500;
+            margin-bottom: var(--space-xs);
+            color: var(--text-primary);
+        }
+
+        .toggle-desc {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            background: var(--border-default);
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: background var(--transition-fast);
+            z-index: 1;
+            flex-shrink: 0;
+            border: none;
+        }
+
+        .toggle-switch.active {
+            background: var(--color-primary);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform var(--transition-fast);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(24px);
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: var(--space-lg);
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="#" class="back-link" id="backToSidepanel">
+            ← 返回主界面
+        </a>
+        
+        <div class="header">
+            <h1>⚙️ AI文档智写 设置</h1>
+            <p>配置截图选项和导出设置</p>
+        </div>
+        
+
+        
+        <div class="section">
+            <h2 class="section-title">
+                🎬 视频导出设置
+            </h2>
+            
+            <div class="form-group">
+                <label for="transitionType">转场动画类型</label>
+                <select id="transitionType" class="form-select">
+                    <option value="random">随机转场动画</option>
+                    <option value="fade">淡入淡出</option>
+                    <option value="slide">滑动效果</option>
+                    <option value="zoom">缩放效果</option>
+                    <option value="flip">翻转效果</option>
+                    <option value="wipe">擦除效果</option>
+                    <option value="circle">圆形扩散</option>
+                </select>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="frameDuration">每帧显示时长 (毫秒)</label>
+                    <input type="number" id="frameDuration" placeholder="4000" value="4000" min="1000" max="10000" step="500">
+                </div>
+                
+                <div class="form-group">
+                    <label for="transitionDuration">转场动画时长 (毫秒)</label>
+                    <input type="number" id="transitionDuration" placeholder="800" value="800" min="200" max="2000" step="100">
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" id="saveVideoConfig">
+                    💾 保存视频设置
+                </button>
+            </div>
+            
+            <div id="videoStatus" class="status-message"></div>
+            
+            <div class="help-card">
+                <strong>💡 视频设置说明：</strong>
+                <ol>
+                    <li><strong>转场动画类型</strong>：选择视频中步骤间的过渡效果</li>
+                    <li><strong>随机转场动画</strong>：每次导出时随机选择不同的转场效果</li>
+                    <li><strong>固定转场动画</strong>：所有步骤间使用相同的转场效果</li>
+                    <li><strong>每帧显示时长</strong>：每个步骤在视频中的显示时间</li>
+                    <li><strong>转场动画时长</strong>：步骤间过渡动画的持续时间</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                📄 文档导出设置
+            </h2>
+            
+            <div class="form-group">
+                <label for="docTitle">文档标题</label>
+                <input type="text" id="docTitle" class="form-input" placeholder="操作步骤" value="操作步骤">
+            </div>
+            
+            <div class="feature-toggle">
+                <div class="toggle-info">
+                    <div class="toggle-title">显示文档信息</div>
+                    <div class="toggle-desc">显示生成时间和总步骤数</div>
+                </div>
+                <div class="toggle-switch" id="docShowInfo"></div>
+            </div>
+            
+
+            <div class="feature-toggle">
+                <div class="toggle-info">
+                    <div class="toggle-title">显示时间戳</div>
+                    <div class="toggle-desc">显示每个步骤的截图时间</div>
+                </div>
+                <div class="toggle-switch" id="docShowTime"></div>
+            </div>
+            
+            <div class="feature-toggle">
+                <div class="toggle-info">
+                    <div class="toggle-title">显示尾部信息</div>
+                    <div class="toggle-desc">显示"本文档由 AI 自动生成"</div>
+                </div>
+                <div class="toggle-switch" id="docShowFooter"></div>
+            </div>
+            
+            <div id="footerTextGroup" style="margin-top: 16px;">
+                <div class="form-group">
+                    <label for="docFooterText">尾部自定义文字</label>
+                    <input type="text" id="docFooterText" class="form-input" placeholder="本文档由 AI 自动生成" value="本文档由 AI 自动生成">
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" id="saveDocConfig">
+                    💾 保存文档设置
+                </button>
+            </div>
+            
+            <div id="docStatus" class="status-message"></div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                🖼️ 智谱视觉识别设置
+            </h2>
+            
+            <div class="feature-toggle">
+                <div class="toggle-info">
+                    <div class="toggle-title">启用智谱视觉识别</div>
+                    <div class="toggle-desc">使用智谱 GLM-4.6V-Flash 模型对截图进行 AI 识别</div>
+                </div>
+                <div class="toggle-switch" id="zhipuToggle"></div>
+            </div>
+            
+            <div id="zhipuConfig" style="display: none;">
+                <div class="form-group full-width">
+                    <label for="zhipuApiKey">API Key</label>
+                    <input type="password" id="zhipuApiKey" placeholder="输入您的智谱 API Key">
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="zhipuDefaultPrompt">默认提示词</label>
+                    <textarea id="zhipuDefaultPrompt" style="
+                        width: 100%;
+                        min-height: 80px;
+                        padding: 12px 16px;
+                        border: 2px solid var(--input-border);
+                        border-radius: 8px;
+                        font-size: 14px;
+                        resize: vertical;
+                        background: var(--input-bg);
+                        color: var(--text-primary);
+                        font-family: inherit;
+                    " placeholder="请详细描述这张图片的内容">请详细描述这张图片的内容</textarea>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">
+                        支持多轮对话上下文，请描述您希望 AI 如何分析图片
+                    </div>
+                </div>
+                
+                <div class="help-card">
+                    <strong>💡 智谱视觉识别配置说明：</strong>
+                    <ol>
+                        <li>前往 <a href="https://open.bigmodel.cn/" target="_blank" style="color: var(--btn-primary);">智谱 AI 开放平台</a> 注册并获取 API Key</li>
+                        <li>支持的模型：<strong>GLM-4.6V-Flash</strong>（推荐，免费额度充足）</li>
+                        <li>每次识别会消耗 API 调用额度，请注意使用</li>
+                        <li>默认提示词可自定义，AI 会根据您的提示词分析图片</li>
+                    </ol>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn btn-primary" id="saveZhipuConfig">
+                        💾 保存配置
+                    </button>
+                </div>
+                
+                <div id="zhipuStatus" class="status-message"></div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">
+                🎯 DOM 高亮模式设置
+            </h2>
+            
+            <div class="form-group">
+                <label for="highlightOpacity">半透明遮罩透明度</label>
+                <div style="display: flex; align-items: center; gap: 16px;">
+                    <input type="range" id="highlightOpacity" min="0" max="1" step="0.1" value="0.2" style="flex: 1;">
+                    <span id="highlightOpacityValue" style="min-width: 40px; text-align: right; font-weight: 500;">20%</span>
+                </div>
+                <div style="font-size: 12px; color: var(--text-muted); margin-top: 6px;">
+                    0% = 完全透明，100% = 完全不透明
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" id="saveHighlightConfig">
+                    💾 保存设置
+                </button>
+            </div>
+            
+            <div id="highlightStatus" class="status-message"></div>
+        </div>
+    </div>
+    
+    <script src="bundles/zhipu-vision.min.js"></script>
+    <script src="bundles/github-uploader.min.js"></script>
+    <script src="bundles/settings.min.js"></script>
+    <script src="bundles/zhipu-settings.min.js"></script>
+        <script src="bundles/doc-settings.min.js"></script>
+</body>
+</html>
